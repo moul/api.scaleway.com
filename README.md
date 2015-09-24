@@ -1,5 +1,6 @@
 # api.scaleway.com :pencil:
 
+* Scaleway API documentation on Apiary :new:: http://docs.scaleway.apiary.io/
 * Scaleway API documentation: https://developer.scaleway.com
 * API Issues: https://github.com/scaleway/api.scaleway.com/issues
 
