@@ -1,0 +1,1186 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Scaleway API",
+        "version": "",
+        "description": "The Scaleway API allows you to manage servers and resources in a simple, programmatic way using conventional HTTP requests. \nAll features you will find in the web control panel are also available through the API.\n\n## Request and response\n\nOur api works over https and is accessed from two endpoint:\n\n- `account.scaleway.com` domain related to account actions\n\n- `api.scaleway.com` domain related to compute actions\n\nAll data is sent and received as json.\n\n## Constructing Requests\n\nRequests are made of two components:\n\n- Base URL: `https://api.scaleway.com`\n\n- Resource path: `servers`\n\nTo construct a proper request, you need to format the URL as follows:\n\n`https://api.scaleway.com/{resource}`\n\nExample: `https://api.scaleway.com/volumes/f929fe39-63f8-4be8-a80e-1e9c8ae22a76`\n\nThe following code is an example request to retrieve detailed informations about a volume\n\n```\n% curl -H 'X-Auth-Token: 017ce0ce-20ec-4d4ez-b44c-e561a23481d2c' -H 'Content-Type: application/json' https://api.scaleway.com/volumes/f929fe39-63f8-4be8-a80e-1e9c8ae22a76 -i\n\nHTTP/1.1 200 OK\nServer: nginx\nDate: Thu, 22 May 2014 07:55:00 GMT\nContent-Type: application/json\nContent-Length: 1345\nConnection: keep-alive\nX-Sentry-ID: None\nStrict-Transport-Security: max-age=86400\n\n{\n  \"volumes\": [\n    {\n      \"export_uri\": null,\n      \"id\": \"f929fe39-63f8-4be8-a80e-1e9c8ae22a76\",\n      \"name\": \"volume-0-1\",\n      \"organization\": \"000a115d-2852-4b0a-9ce8-47f1134ba95a\",\n      \"server\": null,\n      \"size\": 10000000000,\n      \"volume_type\": \"l_ssd\"\n    },\n    {\n      \"export_uri\": null,\n      \"id\": \"0facb6b5-b117-441a-81c1-f28b1d723779\",\n      \"name\": \"volume-0-2\",\n      \"organization\": \"000a115d-2852-4b0a-9ce8-47f1134ba95a\",\n      \"server\": null,\n      \"size\": 20000000000,\n      \"volume_type\": \"l_ssd\"\n    }\n  ]\n}\n```\n\n## Basic Authentication\n\nYou authenticate to the API by requesting a token. You can create a token from the `account.scaleway.com` domain related to account actions with a POST request on the /tokens HTTP resource.\n\nBasic Authentication process:\n\n- Query via POST request the /tokens resource [see here how to](https://developer.scaleway.com/#tokens-tokens-post)\n\n- Supply an \"X-Auth-Token\" header followed by the token you get previously, e.g. \"4e0b46e4-7c1d-44d4-8ba6-dc5f80694397\"\n\n```\ncurl -X GET -H \"X-Auth-Token: 4e0b46e4-7c1d-44d4-8ba6-dc5f80694397\" -H \"Content-Type: application/json\" https://account.scaleway.com/{resources}\n```\n\n## Errors\n\nWe use conventional HTTP response codes to indicate success or failure of an API request.\n\nIn general, codes in the 2xx range indicate success, codes in the 4xx range indicate an error that resulted from the provided information (e.g., a required parameter is missing), and codes in the 5xx range indicate an error with our servers.\n\n### HTTP Status Code Summary\n\n- `200 OK` - Everything worked as expected.\n\n- `400 Bad Request` - Often missing a required parameter.\n\n- `401 Unauthorized` - No valid API key provided.\n\n- `402 Request Failed` - Parameters were valid but request failed.\n\n- `403 Forbidden` - Insufficient privileges to access requested resource.\n\n- `404 Not Found` - The requested item doesn't exist.\n\n- `50x` Server errors - something went wrong on api domain's end.\n\nInput and output data must be valid JSON with appropriate Content-Type header set.\n\n### Attributes\n\n- type:\n \n  - `invalid_request_error`: Occur when your request has invalid parameters.\n  - `invitalid_auth`: Arise when there is a problem of authentication.\n  - `uknown_resource`: Occur when the resource doesn't exist.\n  - `authorization_required`: You don't have sufficient right to access the resource.\n  - `api_error`: API errors use in case of problem with api domain's servers\n\n- message:\n \n  - A human readable error giving more details about the error\n\n- fields (Optional):\n\n  - An array of parameters with an human readable message giving more details about the error.\n\n### Errors responses example \n\n+ Response 400 (application/json)\n\n        {\n            \"fields\": {\n                \"email\": [\n                    \"incorrect email address\",\n                    \"required key not provided\"\n                ],\n                \"firstname\": [\n                    \"length of value must be at least 2\",\n                    \"required key not provided\"\n                ],\n                \"lastname\": [\n                    \"length of value must be at least 2\",\n                    \"required key not provided\"\n                ]\n            },\n            \"message\": \"Validation Error\",\n            \"type\": \"invalid_request_error\"\n        }\n\n+ Response 401 (application/json)\n\n        {\n            \"message\": \"The header 'X-Auth-Token' is missing\",\n            \"type\": \"invalid_auth\"\n        }\n\n+ Response 403 (application/json)\n\n        {\n          \"message\": \"The token provided doesn't have the requested permission.\",\n          \"type\": \"authorization_required\"\n        }\n\n+ Response 404 (application/json)\n\n        {\n            \"message\": \"User not found\",\n            \"type\": \"unknown_resource\"\n        }\n        \n        \n"
+    },
+    "host": "api.scaleway.com",
+    "basePath": "/",
+    "schemes": [
+        "https"
+    ],
+    "paths": {
+        "/tokens": {
+            "post": {
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Create a token",
+                "description": "Authenticates a user against their username, password, and then returns a new Token, which can be used until it expires.\n\nThe response is an object that has a key called `token`. This key contain a standard `token` object.\n\n",
+                "tags": [
+                    "Tokens"
+                ],
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "type": "object",
+                            "required": [],
+                            "properties": {
+                                "email": {
+                                    "type": "string"
+                                },
+                                "password": {
+                                    "type": "string"
+                                },
+                                "expires": {
+                                    "type": ""
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "List all tokens",
+                "description": "List all Tokens associate with your account\n\nThe response is an object that has a key called `tokens`. This key contain an array of token objects each of which contain the standard `token` attributes.\n\n",
+                "tags": [
+                    "Tokens"
+                ],
+                "parameters": []
+            }
+        },
+        "/tokens/{token_id}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Retrieve a token",
+                "description": "List an individual Token\n\nThe response is an object that has a key called `token`. This key contain a standard `token` object.\n\n",
+                "tags": [
+                    "Tokens"
+                ],
+                "parameters": [
+                    {
+                        "name": "token_id",
+                        "in": "path",
+                        "description": "Token unique identifier",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            },
+            "patch": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Update a token",
+                "description": "Increase Token expiration time of 30 minutes\n\nThe response is an object that has a key called `token`. This key contain a standard `token` object.\n\n",
+                "tags": [
+                    "Tokens"
+                ],
+                "parameters": [
+                    {
+                        "name": "token_id",
+                        "in": "path",
+                        "description": "Token unique identifier",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "type": "object",
+                            "required": [],
+                            "properties": {
+                                "expires": {
+                                    "type": ""
+                                },
+                                "description": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Remove a token",
+                "description": "Delete an individual token\n\nThe response code is a 204, which means that the action was successful with no returned body data.\n\n",
+                "tags": [
+                    "Tokens"
+                ],
+                "parameters": [
+                    {
+                        "name": "token_id",
+                        "in": "path",
+                        "description": "Token unique identifier",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "/organizations": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "List all organizations",
+                "description": "List all Organizations associate with your account\n\nThe response is an object that has a key called `organizations`. This key contain an array of organization objects each of which contain the standard `organization` attributes.\n\n",
+                "tags": [
+                    "Organizations"
+                ],
+                "parameters": []
+            }
+        },
+        "/users/{user_id}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Retrieve a user",
+                "description": "List informations about your user account\n\nThe response is an object that has a key called `user`. This key contain a standard `user` object.\n\n",
+                "tags": [
+                    "Users"
+                ],
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "User unique identifier",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "/servers": {
+            "post": {
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Create a new server",
+                "description": "Create a new server\n\nThe response is an object that has a key called `server`. This key contain a standard `server` object.\n\n",
+                "tags": [
+                    "Servers"
+                ],
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "type": "object",
+                            "required": [],
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "organization": {
+                                    "type": "string"
+                                },
+                                "image": {
+                                    "type": "string"
+                                },
+                                "volumes": {
+                                    "type": "array"
+                                },
+                                "tags": {
+                                    "type": "array"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "List all servers",
+                "description": "List all servers associate with your account\n\nThe response is an object that has a key called `servers`. This key contain an array of server objects each of which contain the standard `server` attributes.\n\n",
+                "tags": [
+                    "Servers"
+                ],
+                "parameters": []
+            }
+        },
+        "/servers/{server_id}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Retrieve a server",
+                "description": "List an individual server\n\nThe response is an object that has a key called `server`. This key contain a standard `server` object.\n\n",
+                "tags": [
+                    "Servers"
+                ],
+                "parameters": [
+                    {
+                        "name": "server_id",
+                        "in": "path",
+                        "description": "Server unique identifier",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            },
+            "put": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Update a server",
+                "description": "Update details about a server\n\nThe response is an object that has a key called `server`. This key contain a standard `server` object.\n\n",
+                "tags": [
+                    "Servers"
+                ],
+                "parameters": [
+                    {
+                        "name": "server_id",
+                        "in": "path",
+                        "description": "Server unique identifier",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            },
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Remove a server",
+                "description": "Delete a server\n\nThe response code is a 204, which means that the action was successful with no returned body data.\n\n",
+                "tags": [
+                    "Servers"
+                ],
+                "parameters": [
+                    {
+                        "name": "server_id",
+                        "in": "path",
+                        "description": "Server unique identifier",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "/servers/{server_id}/action": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "List all actions",
+                "description": "List all actions available for the secified server\n\nThe response is an object that has a key called `actions`. This key contain an array of action\n\n",
+                "tags": [
+                    "Servers"
+                ],
+                "parameters": [
+                    {
+                        "name": "server_id",
+                        "in": "path",
+                        "description": "Server unique identifier",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            },
+            "post": {
+                "responses": {
+                    "202": {
+                        "description": "Accepted",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Execute an action",
+                "description": "Execute an action on a server\n\nThe response is an object that has a key called `task`. This key contain a standard `task` object.\n\n",
+                "tags": [
+                    "Servers"
+                ],
+                "parameters": [
+                    {
+                        "name": "server_id",
+                        "in": "path",
+                        "description": "Server unique identifier",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "server_id",
+                        "in": "path",
+                        "description": "Server unique identifier",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "action",
+                        "in": "body",
+                        "description": "Action to execute",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "/volumes": {
+            "post": {
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Create a new volume",
+                "description": "Create a new volume\n\nThe response is an object that has a key called `volume`. This key contain a standard `volume` object.\n\n",
+                "tags": [
+                    "Volumes"
+                ],
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "type": "object",
+                            "required": [],
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "organization": {
+                                    "type": "string"
+                                },
+                                "volume_type: `l_ssd`": {
+                                    "type": "string"
+                                },
+                                "size": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Retrieves all volumes",
+                "description": "List all volumes associate with your account\n\nThe response is an object that has a key called `volumes`. This key contain an array of volume objects each of which contain the standard `volume` attributes.\n\n",
+                "tags": [
+                    "Volumes"
+                ],
+                "parameters": []
+            }
+        },
+        "/volumes/{volume_id}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Retrieves informations about a volume",
+                "description": "List an individual volume\n\nThe response is an object that has a key called `volume`. This key contain a standard `volume` object.\n\n",
+                "tags": [
+                    "Volumes"
+                ],
+                "parameters": [
+                    {
+                        "name": "volume_id",
+                        "in": "path",
+                        "description": "Volume unique identifier",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            },
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Delete a volume",
+                "description": "Delete a volume\n\nThe response code is a 204, which means that the action was successful with no returned body data.\n\n",
+                "tags": [
+                    "Volumes"
+                ],
+                "parameters": [
+                    {
+                        "name": "volume_id",
+                        "in": "path",
+                        "description": "Volume unique identifier",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "/snapshots": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Create a snapshot",
+                "description": "Create a new server\n\nThe response is an object that has a key called `snapshot`. This key contain a standard `snapshot` object.\n\n",
+                "tags": [
+                    "Snapshots"
+                ],
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "type": "object",
+                            "required": [],
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "organization": {
+                                    "type": "string"
+                                },
+                                "volume_id": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "List all snapshots",
+                "description": "List all snapshots associate with your account\n\nThe response is an object that has a key called `snapshots`. This key contain an array of snapshot objects each of which contain the standard `snapshot` attributes.\n\n",
+                "tags": [
+                    "Snapshots"
+                ],
+                "parameters": []
+            }
+        },
+        "/snapshots/{snapshot_id}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Retrieve a snapshot",
+                "description": "List an individual snapshot\n\nThe response is an object that has a key called `snapshot`. This key contain a standard `snapshot` object.\n\n",
+                "tags": [
+                    "Snapshots"
+                ],
+                "parameters": [
+                    {
+                        "name": "snapshot_id",
+                        "in": "path",
+                        "description": "Snapshot unique identifier",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            },
+            "put": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Update a snapshot",
+                "description": "Update details about a snapshot\n\nThe response is an object that has a key called `snapshot`. This key contain a standard `snapshot` object.\n\n",
+                "tags": [
+                    "Snapshots"
+                ],
+                "parameters": [
+                    {
+                        "name": "snapshot_id",
+                        "in": "path",
+                        "description": "Snapshot unique identifier",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "type": "object",
+                            "required": [],
+                            "properties": {
+                                "organization": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Remove a snapshot",
+                "description": "Delete a snapshot\n\nThe response code is a 204, which means that the action was successful with no returned body data.\n\n",
+                "tags": [
+                    "Snapshots"
+                ],
+                "parameters": [
+                    {
+                        "name": "snapshot_id",
+                        "in": "path",
+                        "description": "Snapshot unique identifier",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "/images": {
+            "post": {
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Create a new image",
+                "description": "Create a new image\n\nThe response is an object that has a key called `image`. This key contain a standard `image` object.\n\n",
+                "tags": [
+                    "Images"
+                ],
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "type": "object",
+                            "required": [],
+                            "properties": {
+                                "organization": {
+                                    "type": "string"
+                                },
+                                "name": {
+                                    "type": "string"
+                                },
+                                "arch": {
+                                    "type": "string"
+                                },
+                                "root_volume": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "List all images",
+                "description": "List all images associate with your account\n\nThe response is an object that has a key called `images`. This key contain an array of image objects each of which contain the standard `images` attributes.\n\n",
+                "tags": [
+                    "Images"
+                ],
+                "parameters": []
+            }
+        },
+        "/images/{image_id}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Retrieves an image",
+                "description": "List an individual image\n\nThe response is an object that has a key called `image`. This key contain a standard `image` object.\n\n",
+                "tags": [
+                    "Images"
+                ],
+                "parameters": [
+                    {
+                        "name": "image_id",
+                        "in": "path",
+                        "description": "Image unique identifier",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            },
+            "put": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Update an image",
+                "description": "Update details about a image\n\nThe response is an object that has a key called `image`. This key contain a standard `image` object.\n\n",
+                "tags": [
+                    "Images"
+                ],
+                "parameters": [
+                    {
+                        "name": "image_id",
+                        "in": "path",
+                        "description": "Image unique identifier",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            },
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Delete an image",
+                "description": "Delete an image\n\nThe response code is a 204, which means that the action was successful with no returned body data.\n\n",
+                "tags": [
+                    "Images"
+                ],
+                "parameters": [
+                    {
+                        "name": "image_id",
+                        "in": "path",
+                        "description": "Image unique identifier",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "/ips": {
+            "post": {
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Create a new IP",
+                "description": "Create a new reserved IP address\n\nThe response is an object that has a key called `ip`. This key contain a standard `ip` object.\n\n",
+                "tags": [
+                    "IPs"
+                ],
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "type": "object",
+                            "required": [],
+                            "properties": {
+                                "organization": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Retrieves all IPs addresses",
+                "description": "List all IPs associate with your account\n\nThe response is an object that has a key called `ips`. This key contain an array of ip objects each of which contain the standard `ip` attributes.\n\n",
+                "tags": [
+                    "IPs"
+                ],
+                "parameters": []
+            }
+        },
+        "/ips/{ip_id}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Retrieve an IP address",
+                "description": "List an individual IP address\n\nThe response is an object that has a key called `ip`. This key contain a standard `ip` object.\n\n",
+                "tags": [
+                    "IPs"
+                ],
+                "parameters": [
+                    {
+                        "name": "ip_id",
+                        "in": "path",
+                        "description": "Ip unique identifier",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            },
+            "put": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Attach an IP address",
+                "description": "Allow you to remap an IP address to another server\n\nThe response is an object that has a key called `ip`. This key contain a standard `ip` object.\n\n",
+                "tags": [
+                    "IPs"
+                ],
+                "parameters": [
+                    {
+                        "name": "ip_id",
+                        "in": "path",
+                        "description": "Ip unique identifier",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            },
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Remove an IP address",
+                "description": "Delete a server\n\nThe response code is a 204, which means that the action was successful with no returned body data.\n\n",
+                "tags": [
+                    "IPs"
+                ],
+                "parameters": [
+                    {
+                        "name": "ip_id",
+                        "in": "path",
+                        "description": "Ip unique identifier",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "/security_groups": {
+            "post": {
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Create a security group",
+                "description": "Create a new security group\n\nThe response is an object that has a key called `security_group`. This key contain a standard `security_group` object.\n\n",
+                "tags": [
+                    "Security groups"
+                ],
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "type": "object",
+                            "required": [],
+                            "properties": {
+                                "organization": {
+                                    "type": "string"
+                                },
+                                "name": {
+                                    "type": "string"
+                                },
+                                "description": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "List all security groups",
+                "description": "List all security groups associate with your account\n\nThe response is an object that has a key called `security_groups`. This key contain an array of security group objects each of which contain the standard `security_groups` attributes.\n\n",
+                "tags": [
+                    "Security groups"
+                ],
+                "parameters": []
+            }
+        },
+        "/security_groups/{group_id}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Retrieves a security group",
+                "description": "List an individual security group\n\nThe response is an object that has a key called `security_group`. This key contain a standard `security_group` object.\n\n",
+                "tags": [
+                    "Security groups"
+                ],
+                "parameters": [
+                    {
+                        "name": "group_id",
+                        "in": "path",
+                        "description": "Security group id unique identifier",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            },
+            "put": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Update a security group",
+                "description": "Update a security group details\n\nThe response is an object that has a key called `security_group`. This key contain a standard `security_group` object.\n\n",
+                "tags": [
+                    "Security groups"
+                ],
+                "parameters": [
+                    {
+                        "name": "group_id",
+                        "in": "path",
+                        "description": "Security group id unique identifier",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            },
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Delete a security group",
+                "description": "Delete a security group\n\nThe response code is a 204, which means that the action was successful with no returned body data.\n\n",
+                "tags": [
+                    "Security groups"
+                ],
+                "parameters": [
+                    {
+                        "name": "group_id",
+                        "in": "path",
+                        "description": "Security group id unique identifier",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "/security_groups/{group_id}/rules": {
+            "post": {
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Create a new rule",
+                "description": "Create a new rule\n\nThe response is an object that has a key called `rule`. This key contain a standard `rule` object.\n\naction: \"accept\"\ndirection: \"outbound\"\nip_range: \"0.0.0.0/0\"\nprotocol: \"ICMP\"\n\n",
+                "tags": [
+                    "Security groups"
+                ],
+                "parameters": [
+                    {
+                        "name": "group_id",
+                        "in": "path",
+                        "description": "Security group unique identifier",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "type": "object",
+                            "required": [],
+                            "properties": {
+                                "organization": {
+                                    "type": "string"
+                                },
+                                "action": {
+                                    "type": "string"
+                                },
+                                "direction": {
+                                    "type": "string"
+                                },
+                                "ip_range": {
+                                    "type": "string"
+                                },
+                                "protocol": {
+                                    "type": "string"
+                                },
+                                "dest_port_from": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "List all rules",
+                "description": "List all rules for a security group\n\nThe response is an object that has a key called `rules`. This key contain an array of rules for a security group each of which contain the standard `rule` attributes.\n\n",
+                "tags": [
+                    "Security groups"
+                ],
+                "parameters": [
+                    {
+                        "name": "group_id",
+                        "in": "path",
+                        "description": "Security group unique identifier",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "/security_groups/{group_id}/rules/{rule_id}": {
+            "put": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Update a security rule",
+                "description": "Update a security rule\n\nThe response is an object that has a key called `rule`. This key contain a standard `rule` object.\n\n",
+                "tags": [
+                    "Security groups"
+                ],
+                "parameters": [
+                    {
+                        "name": "group_id",
+                        "in": "path",
+                        "description": "Security group unique identifier",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "rule_id",
+                        "in": "path",
+                        "description": "Security rule unique identifier",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            },
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Retrieves a security rule",
+                "description": "List an individual security rule\n\nThe response is an object that has a key called `rule`. This key contain a standard `rule` object.\n\n",
+                "tags": [
+                    "Security groups"
+                ],
+                "parameters": [
+                    {
+                        "name": "group_id",
+                        "in": "path",
+                        "description": "Security group unique identifier",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "rule_id",
+                        "in": "path",
+                        "description": "Security rule unique identifier",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            },
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Delete a security rule",
+                "description": "Delete and deactivate a security rule\n\nThe response code is a 204, which means that the action was successful with no returned body data.\n\n",
+                "tags": [
+                    "Security groups"
+                ],
+                "parameters": [
+                    {
+                        "name": "group_id",
+                        "in": "path",
+                        "description": "Security group unique identifier",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "rule_id",
+                        "in": "path",
+                        "description": "Security rule unique identifier",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "/conf": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {},
+                        "examples": {}
+                    }
+                },
+                "summary": "Serves pimouss metadata",
+                "description": "Serves instance metadata using its own IP address as authentication token.\n\n",
+                "tags": [
+                    "Metadata"
+                ],
+                "parameters": [
+                    {
+                        "name": "format",
+                        "in": "query",
+                        "description": "Rendering format",
+                        "required": false,
+                        "type": "string"
+                    }
+                ]
+            }
+        }
+    },
+    "definitions": {}
+}
