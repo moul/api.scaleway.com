@@ -299,12 +299,23 @@ Increase Token expiration time of 30 minutes
 
 The response is an object that has a key called `token`. This key contain a standard `token` object.
 
++ Attributes
+    
+    + expires: `false` (boolean, optional) - If false, the token is permanent, if true, it expires in 30 minutes
+    + description: `my token` (string, optional) - A token description
+
 + Request (application/json)
 
     + Headers
     
             X-Auth-Token: aaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee
+            
+    + Body
 
+            {
+              "expires": true,
+              "description": "my token"
+            }
 
 + Response 200 (application/json)
 
