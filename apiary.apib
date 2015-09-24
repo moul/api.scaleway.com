@@ -173,10 +173,10 @@ Authenticates a user against their username, password, and then returns a new To
 
 The response is an object that has a key called `token`. This key contain a standard `token` object.
 
-+ Parameters
-    + email (required, string, `jsnow@got.com`)... User email
-    + password (required, string, `winteriscoming`)... User password
-    + expires (optional, boolean, `false`)... Set if you want a Token wich doesn't expire (default: true)
++ Attributes
+    + email: `jsnow@got.com` (string, required) - User email
+    + password: `winteriscoming` (string, required) - User password
+    + expires: `false` (boolean, optional) - Set if you want a Token wich doesn't expire (default: true)
 
 + Request (application/json)
 
@@ -188,9 +188,9 @@ The response is an object that has a key called `token`. This key contain a stan
                 "expires": false
             }
 
-+ Response 201
++ Response 201 (application/json)
 
-    + Headers (application/json)
+    + Headers
            
             location: https://account.cloud.online.net/tokens/9de8f869-c58e-4aa3-9208-2d4eaff5fa20
 
@@ -401,17 +401,21 @@ Create a new server
 
 The response is an object that has a key called `server`. This key contain a standard `server` object.
 
-+ Parameters
++ Attributes
     
-    + name (required, string, `my_server`)... The server name
-    + organization (required, string, `000a115d-2852-4b0a-9ce8-47f1134ba95a`)... Organization unique identifier
-    + image (required, string, `85917034-46b0-4cc5-8b48-f0a2245e357e`)... Image unique identifier
-    + volumes (required, list, `volumes: {1: {name: "vol_demo", organization: "ecc1c86a-eabb-43a7-9c0a-77e371753c0a", size: 10000000000, volume_type: "l_sdd"`)... A list of volumes identifier to be attached to the server
-    + tags (optional, list, `[test, www]`)... A list of tags
+    + name: `my_server` (string, required) - The server name
+    + organization: `000a115d-2852-4b0a-9ce8-47f1134ba95a` (string, required) - Organization unique identifier
+    + image: `85917034-46b0-4cc5-8b48-f0a2245e357e` (string, required) - Image unique identifier
+    + volumes: `volumes: {1: {name: "vol_demo", organization: "ecc1c86a-eabb-43a7-9c0a-77e371753c0a", size: 10000000000, volume_type: "l_sdd"` (array, required) - A list of volumes identifier to be attached to the server
+    + tags: `[test, www]` (array, optional) - A list of tags
 
-+ Request
++ Request (application/json)
 
-      + Body
+    + Headers
+    
+            X-Auth-Token: aaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee
+
+    + Body
 
             {
               "organization": "000a115d-2852-4b0a-9ce8-47f1134ba95a",
@@ -422,46 +426,46 @@ The response is an object that has a key called `server`. This key contain a sta
 
 + Response 201 (application/json)
 
-    + Header
+    + Headers
     
-        location: https://api.cloud.online.net/servers/3cb18e2d-f4f7-48f7-b452-59b88ae8fc8c
+            location: https://api.cloud.online.net/servers/3cb18e2d-f4f7-48f7-b452-59b88ae8fc8c
 
     + Body
 
-        {
-          "server": {
-            "bootscript": null,
-            "dynamic_public_ip": false,
-            "id": "3cb18e2d-f4f7-48f7-b452-59b88ae8fc8c",
-            "image": {
-              "id": "85917034-46b0-4cc5-8b48-f0a2245e357e",
-              "name": "ubuntu working"
-            },
-            "name": "my_server",
-            "organization": "000a115d-2852-4b0a-9ce8-47f1134ba95a",
-            "private_ip": null,
-            "public_ip": null,
-            "state": "running",
-            "tags": [
-              "test",
-              "www"
-            ],
-            "volumes": {
-              "0": {
-                "export_uri": null,
-                "id": "d9257116-6919-49b4-a420-dcfdff51fcb1",
-                "name": "vol simple snapshot",
-                "organization": "000a115d-2852-4b0a-9ce8-47f1134ba95a",
-                "server": {
-                  "id": "3cb18e2d-f4f7-48f7-b452-59b88ae8fc8c",
-                  "name": "my_server"
+            {
+              "server": {
+                "bootscript": null,
+                "dynamic_public_ip": false,
+                "id": "3cb18e2d-f4f7-48f7-b452-59b88ae8fc8c",
+                "image": {
+                  "id": "85917034-46b0-4cc5-8b48-f0a2245e357e",
+                  "name": "ubuntu working"
                 },
-                "size": 10000000000,
-                "volume_type": "l_ssd"
+                "name": "my_server",
+                "organization": "000a115d-2852-4b0a-9ce8-47f1134ba95a",
+                "private_ip": null,
+                "public_ip": null,
+                "state": "running",
+                "tags": [
+                  "test",
+                  "www"
+                ],
+                "volumes": {
+                  "0": {
+                    "export_uri": null,
+                    "id": "d9257116-6919-49b4-a420-dcfdff51fcb1",
+                    "name": "vol simple snapshot",
+                    "organization": "000a115d-2852-4b0a-9ce8-47f1134ba95a",
+                    "server": {
+                      "id": "3cb18e2d-f4f7-48f7-b452-59b88ae8fc8c",
+                      "name": "my_server"
+                    },
+                    "size": 10000000000,
+                    "volume_type": "l_ssd"
+                  }
+                }
               }
             }
-          }
-        }
 
 ##### List all servers [GET]
 
@@ -596,43 +600,47 @@ Update details about a server
 
 The response is an object that has a key called `server`. This key contain a standard `server` object.
 
-+ Request
++ Request (application/json)
+
+    + Headers
+    
+            X-Auth-Token: aaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee
 
     + Body
 
-        {
-          "bootscript": null,
-          "dynamic_public_ip": false, 
-          "id": "741db378-6b87-46d4-a8c5-4e46a09ab1f8",
-          "image": {
-                "id": "85917034-46b0-4cc5-8b48-f0a2245e357e", 
-                "name": "ubuntu working"
-              }, 
-          "name": "my_server", 
-          "organization": "000a115d-2852-4b0a-9ce8-47f1134ba95a", 
-          "private_ip": null, 
-          "public_ip": null, 
-          "state": "running",
-          "tags": [
-            "test", 
-            "www", 
-            "new"
-          ], 
-          "volumes": {
-            "0": {
-              "export_uri": null, 
-              "id": "c39b49f4-1804-4d03-96b4-952896b0918e", 
-              "name": "vol simple snapshot", 
+            {
+              "bootscript": null,
+              "dynamic_public_ip": false, 
+              "id": "741db378-6b87-46d4-a8c5-4e46a09ab1f8",
+              "image": {
+                    "id": "85917034-46b0-4cc5-8b48-f0a2245e357e", 
+                    "name": "ubuntu working"
+                  }, 
+              "name": "my_server", 
               "organization": "000a115d-2852-4b0a-9ce8-47f1134ba95a", 
-              "server": {
-                "id": "345b862b-9198-4633-94a5-3f0307702652", 
-                "name": "my_server"
-              }, 
-              "size": 10000000000, 
-              "volume_type": "l_ssd"
+              "private_ip": null, 
+              "public_ip": null, 
+              "state": "running",
+              "tags": [
+                "test", 
+                "www", 
+                "new"
+              ], 
+              "volumes": {
+                "0": {
+                  "export_uri": null, 
+                  "id": "c39b49f4-1804-4d03-96b4-952896b0918e", 
+                  "name": "vol simple snapshot", 
+                  "organization": "000a115d-2852-4b0a-9ce8-47f1134ba95a", 
+                  "server": {
+                    "id": "345b862b-9198-4633-94a5-3f0307702652", 
+                    "name": "my_server"
+                  }, 
+                  "size": 10000000000, 
+                  "volume_type": "l_ssd"
+                }
+              }
             }
-          }
-        }
 
 
 + Response 200 (application/json)
@@ -717,31 +725,35 @@ The response is an object that has a key called `task`. This key contain a stand
     + server_id (required, string, `741db378-6b87-46d4-a8c5-4e46a09ab1f8`)... Server unique identifier
     + action (required, string, `poweron`)... Action to execute
 
-+ Request
++ Request (application/json)
+
+    + Headers
+    
+            X-Auth-Token: aaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee
 
     + Body
-
-        {
-          "action": "poweroff"
-        }
+    
+            {
+              "action": "poweroff"
+            }
 
 + Response 202 (application/json)
 
     + Header
 
-        location: https://api.cloud.online.net/tasks/a8a1775c-0dda-4f52-87b2-4e8101d68d6e
+            location: https://api.cloud.online.net/tasks/a8a1775c-0dda-4f52-87b2-4e8101d68d6e
 
     + Body
-
-        {
-          "task": {
-            "description": "server_poweroff",
-            "href_from": "/servers/741db378-6b87-46d4-a8c5-4e46a09ab1f8/action",
-            "id": "a8a1775c-0dda-4f52-87b2-4e8101d68d6e",
-            "progress": "0",
-            "status": "pending"
-          }
-        }
+    
+            {
+              "task": {
+                "description": "server_poweroff",
+                "href_from": "/servers/741db378-6b87-46d4-a8c5-4e46a09ab1f8/action",
+                "id": "a8a1775c-0dda-4f52-87b2-4e8101d68d6e",
+                "progress": "0",
+                "status": "pending"
+              }
+            }
 
 ### group Volumes
 
@@ -755,25 +767,30 @@ Create a new volume
 
 The response is an object that has a key called `volume`. This key contain a standard `volume` object.
 
-+ Parameters
-    + name (required, string, `volume-0-3`)... The volume name
-    + organization (required, string, `000a115d-2852-4b0a-9ce8-47f1134ba95a`)... Unique organization identifier
-    + volume_type (required, string, `l_ssd`)... The volume type l_ssd
-    + size (required, integer, `10000000000`)... The volume size
++ Attributes
+    + name: `volume-0-3` (string, required) - The volume name
+    + organization: `000a115d-2852-4b0a-9ce8-47f1134ba95a` (string, required) - Unique organization identifier
+    + volume_type: `l_ssd` (string, required) - The volume type
+    + size: `10000000000` (number, required) - The volume size
 
 + Request (application/json)
 
-    + Body
-        {
-          "name": "volume-0-3",
-          "organization": "000a115d-2852-4b0a-9ce8-47f1134ba95a",
-          "size": 10000000000,
-          "volume_type": "l_ssd"
-        }
+    + Headers
+    
+            X-Auth-Token: aaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee
 
-+ Response 201
+    + Body
+    
+            {
+              "name": "volume-0-3",
+              "organization": "000a115d-2852-4b0a-9ce8-47f1134ba95a",
+              "size": 10000000000,
+              "volume_type": "l_ssd"
+            }
+
++ Response 201 (application/json)
  
-    + Headers (application/json)
+    + Headers
                 
             https://api.cloud.online.net/volumes/c675f420-cfeb-48ff-ba2a-9d2a4dbe3fcd
 
@@ -799,29 +816,29 @@ List all volumes associate with your account
 The response is an object that has a key called `volumes`. This key contain an array of volume objects each of which contain the standard `volume` attributes.
 
 + Response 200 (application/json)
-
-    {
-      "volumes": [
+    
         {
-          "export_uri": null,
-          "id": "f929fe39-63f8-4be8-a80e-1e9c8ae22a76",
-          "name": "volume-0-1",
-          "organization": "000a115d-2852-4b0a-9ce8-47f1134ba95a",
-          "server": null,
-          "size": 10000000000,
-          "volume_type": "l_ssd"
-        },
-        {
-          "export_uri": null,
-          "id": "0facb6b5-b117-441a-81c1-f28b1d723779",
-          "name": "volume-0-2",
-          "organization": "000a115d-2852-4b0a-9ce8-47f1134ba95a",
-          "server": null,
-          "size": 20000000000,
-          "volume_type": "l_ssd"
+          "volumes": [
+            {
+              "export_uri": null,
+              "id": "f929fe39-63f8-4be8-a80e-1e9c8ae22a76",
+              "name": "volume-0-1",
+              "organization": "000a115d-2852-4b0a-9ce8-47f1134ba95a",
+              "server": null,
+              "size": 10000000000,
+              "volume_type": "l_ssd"
+            },
+            {
+              "export_uri": null,
+              "id": "0facb6b5-b117-441a-81c1-f28b1d723779",
+              "name": "volume-0-2",
+              "organization": "000a115d-2852-4b0a-9ce8-47f1134ba95a",
+              "server": null,
+              "size": 20000000000,
+              "volume_type": "l_ssd"
+            }
+          ]
         }
-      ]
-    }
 
 
 #### Volume [/volumes/{volume_id}]
@@ -836,18 +853,18 @@ List an individual volume
 The response is an object that has a key called `volume`. This key contain a standard `volume` object.
 
 + Response 200 (application/json)
-
-    {
-      "volume": {
-        "export_uri": null,
-        "id": "f929fe39-63f8-4be8-a80e-1e9c8ae22a76",
-        "name": "volume-0-1",
-        "organization": "000a115d-2852-4b0a-9ce8-47f1134ba95a",
-        "server": null,
-        "size": 10000000000,
-        "volume_type": "l_ssd"
-      }
-    }
+    
+        {
+          "volume": {
+            "export_uri": null,
+            "id": "f929fe39-63f8-4be8-a80e-1e9c8ae22a76",
+            "name": "volume-0-1",
+            "organization": "000a115d-2852-4b0a-9ce8-47f1134ba95a",
+            "server": null,
+            "size": 10000000000,
+            "volume_type": "l_ssd"
+          }
+        }
 
 
 ##### Delete a volume [DELETE]
@@ -856,7 +873,7 @@ Delete a volume
 
 The response code is a 204, which means that the action was successful with no returned body data.
 
-+ Response 204
++ Response 204 (application/json)
 
 
 ### group Snapshots
@@ -871,12 +888,17 @@ Create a new server
 
 The response is an object that has a key called `snapshot`. This key contain a standard `snapshot` object.
 
-+ Parameters
-    + name (required, string, ``)... Human readable snapshot name
-    + organization (required, string, `000a115d-2852-4b0a-9ce8-47f1134ba95a`)... Unique organization identifier
-    + volume_id (required, string, `701a8946-ff9d-4579-95e3-1c2c2d0f892d`)... Unique volume identifier
++ Attributes
+
+    + name: `` (string, required) - Human readable snapshot name
+    + organization: `000a115d-2852-4b0a-9ce8-47f1134ba95a` (string, required) - Unique organization identifier
+    + volume_id: `701a8946-ff9d-4579-95e3-1c2c2d0f892d` (string, required) - Unique volume identifier
 
 + Request (application/json)
+
+    + Headers
+    
+            X-Auth-Token: aaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee
 
     + Body
 
@@ -947,7 +969,7 @@ The response is an object that has a key called `snapshots`. This key contain an
 #### Snapshot [/snapshots/{snapshot_id}]
 
 + Parameters
-    + snapshot_id (required, string, `6f418e5f-b42d-4423-a0b5-349c74c454a4`)... Snapshot unique identifier
+    + snapshot_id: `6f418e5f-b42d-4423-a0b5-349c74c454a4` (string, required) - Snapshot unique identifier
 
 ##### Retrieve a snapshot [GET]
 
@@ -979,11 +1001,14 @@ Update details about a snapshot
 
 The response is an object that has a key called `snapshot`. This key contain a standard `snapshot` object.
 
-+ Parameters
-    + snapshot_id (required, string, `6f418e5f-b42d-4423-a0b5-349c74c454a4`)... Snapshot unique identifier
-    + organization (required, string, `000a115d-2852-4b0a-9ce8-47f1134ba95a`)... Organization unique identifier
++ Attributes
+    + organization: `000a115d-2852-4b0a-9ce8-47f1134ba95a` (string, required) - Organization unique identifier
 
 + Request (application/json)
+
+    + Headers
+    
+            X-Auth-Token: aaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee
 
     + Body
 
@@ -1031,13 +1056,18 @@ Create a new image
 
 The response is an object that has a key called `image`. This key contain a standard `image` object.
 
-+ Parameters
-    + organization (required, string, `000a115d-2852-4b0a-9ce8-47f1134ba95a`)... Organization unique identifier
-    + name (required, string, `my_image`)... The image name
-    + arch (required, string, `arm`)... The architecture type
-    + root_volume (required, string, `f0361e7b-cbe4-4882-a999-945192b7171b`)... The root volume unique identifier
++ Attributes
+
+    + organization: `000a115d-2852-4b0a-9ce8-47f1134ba95a` (string, required) - Organization unique identifier
+    + name: `my_image` (string, required) - The image name
+    + arch: `arm` (string, required) - The architecture type
+    + root_volume: `f0361e7b-cbe4-4882-a999-945192b7171b` (string, required) - The root volume unique identifier
 
 + Request (application/json)
+
+    + Headers
+    
+            X-Auth-Token: aaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee
 
     + Body
 
@@ -1158,6 +1188,10 @@ The response is an object that has a key called `image`. This key contain a stan
 
 + Request (application/json)
 
+    + Headers
+    
+            X-Auth-Token: aaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee
+
     + Body
 
             {
@@ -1208,7 +1242,7 @@ Delete an image
 
 The response code is a 204, which means that the action was successful with no returned body data.
 
-+ Response 204
++ Response 204 (application/json)
 
 ### group IPs
 
@@ -1223,10 +1257,15 @@ Create a new reserved IP address
 
 The response is an object that has a key called `ip`. This key contain a standard `ip` object.
 
-+ Parameters
-    + organization (required, string, `000a115d-2852-4b0a-9ce8-47f1134ba95a`)... Organization unique identifier
++ Attributes
+
+    + organization: `000a115d-2852-4b0a-9ce8-47f1134ba95a` (string, required) - Organization unique identifier
 
 + Request (application/json)
+
+    + Headers
+    
+            X-Auth-Token: aaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee
 
     + Body
 
@@ -1294,6 +1333,10 @@ The response is an object that has a key called `ip`. This key contain a standar
 
 + Request (application/json)
 
+    + Headers
+    
+            X-Auth-Token: aaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee
+
     + Body
 
             {
@@ -1325,7 +1368,7 @@ Delete a server
 
 The response code is a 204, which means that the action was successful with no returned body data.
 
-+ Response 204
++ Response 204 (application/json)
 
 
 ### group Security groups
@@ -1340,12 +1383,17 @@ Create a new security group
 
 The response is an object that has a key called `security_group`. This key contain a standard `security_group` object.
 
-+ Parameters
-    + organization (required, string, `000a115d-2852-4b0a-9ce8-47f1134ba95a`)... Organization unique identifier
-    + name (required, string, `security-group-01`)... The security group name
-    + description (required, string, `arm`)... The security group description
++ Attributes
+
+    + organization: `000a115d-2852-4b0a-9ce8-47f1134ba95a` (string, required) - Organization unique identifier
+    + name: `security-group-01` (string, required) - The security group name
+    + description: `arm` (string, required) -  The security group description
 
 + Request (application/json)
+
+    + Headers
+    
+            X-Auth-Token: aaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee
 
     + Body
 
@@ -1442,6 +1490,10 @@ The response is an object that has a key called `security_group`. This key conta
 
 + Request (application/json)
 
+    + Headers
+    
+            X-Auth-Token: aaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee
+
     + Body
 
             {
@@ -1485,6 +1537,9 @@ The response code is a 204, which means that the action was successful with no r
 
 #### Manage rules [/security_groups/{group_id}/rules]
 
++ Parameters
+    + group_id: `000a115d-2852-4b1a-9ce8-47f1134ba95a` (string, required) - Security group unique identifier
+
 ##### Create a new rule [POST]
 
 Create a new rule
@@ -1496,15 +1551,20 @@ direction: "outbound"
 ip_range: "0.0.0.0/0"
 protocol: "ICMP"
 
-+ Parameters
-    + organization (required, string, `000a115d-2852-4b0a-9ce8-47f1134ba95a`)... Organization unique identifier
-    + action (required, string, `accept, drop`)... The rule action
-    + direction (required, string, `outbound, inbound`)... The rule direction
-    + ip_range (required, string, `0.0.0.0/0`). The IPs range, must be an IPv4 range
-    + protocol (required, string, `TCP, UDP, ICMP`)... The rule protocol
-    + dest_port_from (optional, string, `25`)... The port between 1 and 65535
++ Attributes
+
+    + organization: `required, string, `000a115d-2852-4b0a-9ce8-47f1134ba95a` (string, required) - Organization unique identifier
+    + action: `drop` (string, required) - The rule action (accept, drop)
+    + direction: `'inbound` (string, required) - The rule direction (inbound, outbound)
+    + ip_range: `0.0.0.0/0` (string, required) - The IPs range, must be an IPv4 range
+    + protocol: `TCP` (string, required) - The rule protocol (TCP, UDP, ICMP)
+    + dest_port_from: `25` (string, optional) The port between 1 and 65535
 
 + Request (application/json)
+
+    + Headers
+    
+            X-Auth-Token: aaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee
 
     + Body
 
@@ -1517,19 +1577,19 @@ protocol: "ICMP"
 
 + Response 201 (application/json)
 
-    {
-      "rule": {
-          "direction": "inbound",
-          "protocol": "TCP",
-          "ip_range": "0.0.0.0/0",
-          "dest_port_from": null,
-          "action": "drop",
-          "position": 2,
-          "dest_port_to": null,
-          "editable": null,
-          "id": "ef2136c9-6c21-491a-b238-b38de24726a7"
-      }
-    }
+        {
+          "rule": {
+              "direction": "inbound",
+              "protocol": "TCP",
+              "ip_range": "0.0.0.0/0",
+              "dest_port_from": null,
+              "action": "drop",
+              "position": 2,
+              "dest_port_to": null,
+              "editable": null,
+              "id": "ef2136c9-6c21-491a-b238-b38de24726a7"
+          }
+        }
 
 ##### List all rules [GET]
 
@@ -1577,6 +1637,9 @@ The response is an object that has a key called `rules`. This key contain an arr
 
 #### Operation on a security rule [/security_groups/{group_id}/rules/{rule_id}]
 
++ Parameters
+    + group_id: `000a115d-2852-4b1a-9ce8-47f1134ba95a` (string, required) - Security group unique identifier
+    + rule_id: `4a31b633-118e-4900-bd52-facf1085fc8d` (string, required) - Security rule unique identifier
 
 ##### Update a security rule [PUT]
 
@@ -1585,6 +1648,10 @@ Update a security rule
 The response is an object that has a key called `rule`. This key contain a standard `rule` object.
 
 + Request (application/json)
+
+    + Headers
+    
+            X-Auth-Token: aaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee
 
     + Body
 
@@ -1640,7 +1707,7 @@ Delete and deactivate a security rule
 
 The response code is a 204, which means that the action was successful with no returned body data.
 
-+ Response 204
++ Response 204 (application/json)
 
 ### group Metadata
 
