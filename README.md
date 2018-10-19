@@ -1,5 +1,7 @@
 # api.scaleway.com :pencil:
 
+[![GuardRails badge](https://badges.production.guardrails.io/moul/api.scaleway.com.svg)](https://www.guardrails.io)
+
 * Scaleway API documentation on Apiary :new:: http://docs.scaleway.apiary.io/
 * Scaleway API documentation: https://developer.scaleway.com
 * API Issues: https://github.com/scaleway/api.scaleway.com/issues
